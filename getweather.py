@@ -1,21 +1,39 @@
 import requests
 
 
-def create_forcast():
-    cities = (
-        'Лондон',
-        'svo',
-        'Череповец'
-    )
-    url_template = 'http://wttr.in/{}?MnqT&lang=ru'
-    for city in cities:
-        url = url_template.format(city)
-        response = requests.get(url)
-        print(response.text)
+CITIES = [
+    'Лондон',
+    'svo',
+    'Череповец'
+]
+
+
+def make_url(city):
+    return F'http://wttr.in/{city}'
+
+
+def make_parameters():
+    params = {
+        '?MnqT': '',
+        'lang': 'ru'
+    }
+    return params
+
+
+def fetch_weather(city):
+    try:
+        request = requests.get(make_url(city), params=make_parameters())
+        if request.status_code == 200:
+            return request.text
+        else:
+            return 'ошибка на сервере'
+    except requests.ConnectionError:
+        return 'нет сети'
 
 
 def main():
-    create_forcast()
+    for city in CITIES:
+        print(fetch_weather(city))
 
 
 if __name__ == '__main__':

@@ -18,7 +18,10 @@ def request_weather(city):
     url = f'http://wttr.in/{city}'
     response = requests.get(url, PARAMS)
     response.raise_for_status()
-    return response.text
+    if response.ok:
+        return response.text
+    else:
+        return 'ошибка на сервере'
 
 
 def main():

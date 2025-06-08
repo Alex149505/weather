@@ -8,32 +8,26 @@ CITIES = [
 ]
 
 
-def make_url(city):
-    return F'http://wttr.in/{city}'
+PARAMS = {
+    'MnqT': '',
+    'lang': 'ru'
+}
 
 
-def make_parameters():
-    params = {
-        '?MnqT': '',
-        'lang': 'ru'
-    }
-    return params
-
-
-def fetch_weather(city):
-    try:
-        request = requests.get(make_url(city), params=make_parameters())
-        if request.status_code == 200:
-            return request.text
-        else:
-            return 'ошибка на сервере'
-    except requests.ConnectionError:
-        return 'нет сети'
+def request_weather(city):
+    url = f'http://wttr.in/{city}'
+    response = requests.get(url, PARAMS)
+    response.raise_for_status()
+    return response.text
 
 
 def main():
     for city in CITIES:
-        print(fetch_weather(city))
+        try:
+            forecast = request_weather(city)
+        except requests.exceptions.ConnectionError:
+            forecast = 'нет сети'
+        print(forecast)
 
 
 if __name__ == '__main__':

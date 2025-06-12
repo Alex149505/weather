@@ -8,28 +8,25 @@ CITIES = [
 ]
 
 
-PARAMS = {
-    'MnqT': '',
-    'lang': 'ru'
-}
-
-
 def request_weather(city):
     url = f'http://wttr.in/{city}'
-    response = requests.get(url, PARAMS)
+    response = requests.get(url, params)
     response.raise_for_status()
     if response.ok:
         return response.text
-    else:
-        return 'ошибка на сервере'
 
 
 def main():
+    global params
+    params = {
+        'MnqT': '',
+        'lang': 'ru'
+    }
     for city in CITIES:
         try:
             forecast = request_weather(city)
-        except requests.exceptions.ConnectionError:
-            forecast = 'нет сети'
+        except requests.HTTPError:
+            forecast = 'Вы ввели неправильную ссылку или неверный токен.'
         print(forecast)
 
 
